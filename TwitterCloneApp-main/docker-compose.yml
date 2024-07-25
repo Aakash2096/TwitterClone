@@ -1,0 +1,38 @@
+
+version: "3"
+    
+services:
+  
+  db:
+    image: mysql:8
+    container_name: db
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    hostname: db
+    ports:
+      - "${MYSQL_DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: twitter
+      MYSQL_USER: twitter
+      MYSQL_PASSWORD: twitter
+    
+  twitter-backend:
+    depends_on:
+      - db
+    container_name: twitter-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT_BACKEND}:8080"
+    restart: always
+    environment:
+      MYSQL_DB_HOST: ${MYSQL_DB_HOST}
+      MYSQL_DB_PORT: ${MYSQL_DB_PORT}
+      MYSQL_DB_UNAME: ${MYSQL_DB_UNAME}
+      MYSQL_DB_PASSWD: ${MYSQL_DB_PASSWD}
+
+volumes:
+  db_data: {}
